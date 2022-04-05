@@ -47,21 +47,6 @@ function App() {
     );
   }, [frameHandler.state.isLoading]);
 
-  useEffect(() => {
-    if (frameHandler.state.isLoading) return;
-
-    gsap.fromTo(
-      ref.current,
-      { opacity: 0 },
-      { opacity: 1, duration: 2, ease: "easeOutExpo" }
-    );
-    gsap.fromTo(
-      text.current,
-      { opacity: 0 },
-      { opacity: 1, delay: 1, duration: 2, ease: "easeOutExpo" }
-    );
-  }, [frameHandler.state.isLoading]);
-
   return (
     <div className="container">
       <section>
