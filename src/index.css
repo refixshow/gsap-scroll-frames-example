@@ -1,9 +1,20 @@
-html {
+* {
+  padding: 0;
+  margin: 0;
+}
+
+.airpods {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 200vh;
+}
+
+.something {
   height: 100vh;
 }
 
 body {
-  height: 250vh;
   background: #000;
 }
 
@@ -16,12 +27,18 @@ canvas {
   max-height: 100vh;
 }
 
+.opacity {
+  opacity: 0;
+}
+
 .text {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
   color: white;
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
+  height: 100vh;
   font-size: 150px;
   letter-spacing: -0.015em;
   line-height: 0.66667;
@@ -29,4 +46,34 @@ canvas {
   font-family: "SF Pro Display", "SF Pro Icons", "Helvetica Neue", "Helvetica",
     "Arial", sans-serif;
   width: max-content;
+}
+
+.storytell {
+  position: relative;
+  color: white;
+  height: 500vh;
+  font-size: 150px;
+  letter-spacing: -0.015em;
+  line-height: 0.66667;
+  font-weight: 700;
+  font-family: "SF Pro Display", "SF Pro Icons", "Helvetica Neue", "Helvetica",
+    "Arial", sans-serif;
+  max-width: 60ch;
+}
+
+.storytell > div {
+  position: sticky;
+  top: 0;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  height: 100vh;
+  font-size: 64px;
+  text-align: center;
+}
+
+.storytell p {
+  line-height: 1.0625;
+  letter-spacing: -0.0045em;
 }

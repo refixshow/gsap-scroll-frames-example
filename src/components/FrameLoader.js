@@ -4,6 +4,8 @@ import React, { useEffect, forwardRef } from "react";
 const currentFrame = (index, src) =>
   `${src}${index.toString().padStart(4, "0")}.jpg`;
 
+const html = document.documentElement;
+
 const FrameLoader = forwardRef(
   ({ state, setIsLoading, setEndOfFrames }, canvas) => {
     useEffect(() => {
@@ -31,7 +33,6 @@ const FrameLoader = forwardRef(
       cn.width = 1158;
       cn.height = 770;
 
-      const html = document.documentElement;
       const img = new Image();
       img.src = currentFrame(1, state.src);
       img.onload = function () {
@@ -54,7 +55,7 @@ const FrameLoader = forwardRef(
 
       const updateFrame = () => {
         const scrollTop = html.scrollTop;
-        const maxScrollTop = html.scrollHeight - window.innerHeight;
+        const maxScrollTop = html.clientHeight;
         const scrollFraction = scrollTop / maxScrollTop;
         const frameIndex = Math.min(
           state.frameCount - 1,
@@ -71,7 +72,7 @@ const FrameLoader = forwardRef(
       return () => window.removeEventListener("scroll", updateFrame);
     }, [state.isLoading, state.isEndOfFrames]);
 
-    return <canvas ref={canvas}></canvas>;
+    return <canvas className="opacity" ref={canvas}></canvas>;
   }
 );
 
