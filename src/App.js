@@ -1,136 +1,81 @@
+import { useCallback, useEffect, useRef, useState } from "react";
 import "./App.css";
 import gsap from "gsap";
-import ScrollTrigger from "gsap/ScrollTrigger";
-import { useEffect, useRef } from "react";
 
-gsap.registerPlugin(ScrollTrigger);
+import FrameLoader from "./components/FrameLoader";
 
-const generateFrames = (fames) => {
-  const output = [];
-  let n = 1;
-  for (n = 1; n <= fames; n++) {
-    let padded = ("0000" + n).slice(-5);
-    output.push(padded);
+const frameCount = 137;
+const src =
+  "https://www.apple.com/105/media/us/airpods-pro/2019/1299e2f5_9206_4470_b28e_08307a42f19b/anim/sequence/large/01-hero-lightpass/";
 
-    // call images before initialization for performance
-    const img = new Image();
-    img.src = `/assets/frames/01/frame_${padded}.jpg`;
-  }
-  return output;
+const useHandleFrameLoader = () => {
+  const [state, setState] = useState({
+    isLoading: true,
+    isEndOfFrames: false,
+    frameCount,
+    src,
+  });
+
+  const setIsLoading = useCallback((isLoading) => {
+    setState((prev) => ({ ...prev, isLoading }));
+  }, []);
+
+  const setEndOfFrames = useCallback((isEndOfFrames) => {
+    setState((prev) => ({ ...prev, isEndOfFrames }));
+  }, []);
+
+  return { state, setIsLoading, setEndOfFrames };
 };
 
 function App() {
-  const container = useRef(null);
-  const image = useRef(null);
-  const content = useRef(null);
-  const framesL = useRef(generateFrames(141));
+  const ref = useRef(null);
+  const text = useRef(null);
+  const frameHandler = useHandleFrameLoader();
 
   useEffect(() => {
-    if (!container.current) return;
-    if (!image.current) return;
-    if (!content.current) return;
+    if (frameHandler.state.isLoading) return;
 
-    const ls = gsap.timeline({
-      scrollTrigger: {
-        trigger: container.current,
-        start: "+=1500 80%",
-        end: "+=1580 20%",
-        scrub: true,
-      },
-    });
-    ls.to(content.current, { opacity: 0, y: -80 });
-
-    const ls2 = gsap.timeline({
-      scrollTrigger: {
-        trigger: container.current,
-        start: "+=3500",
-        end: "+=4000",
-        scrub: true,
-      },
-    });
-    ls2.to(image.current, { scale: 0.8, y: -500, duration: 0.5 });
-    gsap.timeline({
-      scrollTrigger: {
-        trigger: container.current,
-        start: "+=1500 50%",
-        end: "+=3500",
-        scrub: true,
-        onEnterBack: () => {
-          gsap.set(image.current, {
-            attr: {
-              src: `/assets/frames/01/frame_${framesL.current[140]}.jpg`,
-            },
-          });
-        },
-        onLeaveBack: () => {
-          gsap.set(image.current, {
-            attr: {
-              src: `/assets/frames/01/frame_${framesL.current[0]}.jpg`,
-            },
-          });
-        },
-        onLeave: () => {
-          gsap.set(image.current, {
-            attr: {
-              src: `/assets/frames/01/frame_${framesL.current[140]}.jpg`,
-            },
-          });
-        },
-        onEnter: () => {
-          gsap.set(image.current, {
-            attr: {
-              src: `/assets/frames/01/frame_${framesL.current[0]}.jpg`,
-            },
-          });
-        },
-        onUpdate: (self) => {
-          const frames = 141;
-          const current = Math.round(self.progress * 100);
-          const output = Math.round((frames * current) / 100);
-
-          if (output < 2) return;
-
-          gsap.set(image.current, {
-            attr: {
-              src: `/assets/frames/01/frame_${framesL.current[output - 1]}.jpg`,
-            },
-          });
-        },
-      },
-    });
-  }, []);
-
-  const sec2 = useRef(null);
-
-  const cta = useRef(null);
+    gsap.fromTo(
+      ref.current,
+      { opacity: 0 },
+      { opacity: 1, duration: 2, ease: "easeOutExpo" }
+    );
+    gsap.fromTo(
+      text.current,
+      { opacity: 0 },
+      { opacity: 1, delay: 1, duration: 2, ease: "easeOutExpo" }
+    );
+  }, [frameHandler.state.isLoading]);
 
   useEffect(() => {
-    gsap.set(cta.current, { y: -80, opacity: 0 });
+    if (frameHandler.state.isLoading) return;
 
-    const ls = gsap.timeline({
-      scrollTrigger: {
-        trigger: sec2.current,
-        start: "-=100",
-      },
-    });
-    ls.to(cta.current, { y: 0, opacity: 1, duration: 0.4 });
-  }, []);
+    gsap.fromTo(
+      ref.current,
+      { opacity: 0 },
+      { opacity: 1, duration: 2, ease: "easeOutExpo" }
+    );
+    gsap.fromTo(
+      text.current,
+      { opacity: 0 },
+      { opacity: 1, delay: 1, duration: 2, ease: "easeOutExpo" }
+    );
+  }, [frameHandler.state.isLoading]);
 
   return (
     <div className="container">
-      <section className="relative high xd" ref={container}>
-        <div className="content" ref={content}>
-          <h2>Some sample header</h2>
-          <p>
-            It is a long established fact that a reader will be distracted by
-            the readable content of a page when looking at its layout. The point
-            of using Lorem Ipsum is that it has a more-or-less normal
-            distribution of letters, as opposed to using 'Content h
-          </p>
-          <p>scroll down</p>
-        </div>
-        <div className="animated-img">
-          <img ref={image} src="/assets/frames/01/frame_00001.jpg" alt="cbc" />
+      <section>
+        <header></header>
+      </section>
+      <section>
+        <FrameLoader
+          ref={ref}
+          state={frameHandler.state}
+          setIsLoading={frameHandler.setIsLoading}
+          setEndOfFrames={frameHandler.setEndOfFrames}
+        />
+        <div className="text" ref={text}>
+          <h1>AirPods Pro</h1>
         </div>
       </section>
     </div>
