@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useEffect, forwardRef } from "react";
+import React, { useEffect, forwardRef, useState } from "react";
 
 const currentFrame = (index, src) =>
   `${src}${index.toString().padStart(4, "0")}.jpg`;
@@ -8,14 +8,20 @@ const html = document.documentElement;
 
 const FrameLoader = forwardRef(
   ({ state, setIsLoading, setEndOfFrames }, canvas) => {
+    const [images, setImages] = useState([]);
+
     useEffect(() => {
       const preloadImages = () => {
+        const imgtemp = [];
         for (let i = 1; i < state.frameCount; i++) {
           const img = new Image();
           img.src = currentFrame(i, state.src);
 
+          imgtemp.push(img);
+
           if (i === state.frameCount - 1) {
             img.onload = () => setIsLoading(false);
+            setImages(imgtemp);
           }
         }
       };
@@ -26,6 +32,7 @@ const FrameLoader = forwardRef(
     useEffect(() => {
       if (!canvas.current) return;
       if (state.isLoading) return;
+      if (images.length === 0) return;
 
       const cn = canvas.current;
       const cx = cn.getContext("2d");
@@ -33,15 +40,10 @@ const FrameLoader = forwardRef(
       cn.width = 1158;
       cn.height = 770;
 
-      const img = new Image();
-      img.src = currentFrame(1, state.src);
-      img.onload = function () {
-        cx.drawImage(img, 0, 0);
-      };
+      cx.drawImage(images[0], 0, 0);
 
       const updateImage = (index) => {
-        img.src = currentFrame(index, state.src);
-        cx.drawImage(img, 0, 0);
+        cx.drawImage(images[index + 1], 0, 0);
 
         if (index === state.frameCount) {
           setEndOfFrames(true);
@@ -70,7 +72,7 @@ const FrameLoader = forwardRef(
       updateFrame();
 
       return () => window.removeEventListener("scroll", updateFrame);
-    }, [state.isLoading, state.isEndOfFrames]);
+    }, [state.isLoading, state.isEndOfFrames, images]);
 
     return <canvas className="opacity" ref={canvas}></canvas>;
   }

@@ -76,8 +76,9 @@ function App() {
             scrub: true,
           },
         })
-        .fromTo(el, { y: 100, opacity: 0 }, { y: -40, opacity: 1 })
-        .to(el, { opacity: 0, y: -80 });
+        .fromTo(el, { y: 60, opacity: 0 }, { y: -10, opacity: 1 })
+        .to(el, { y: -50 })
+        .to(el, { opacity: 0, y: -60 });
     });
   }, []);
 
